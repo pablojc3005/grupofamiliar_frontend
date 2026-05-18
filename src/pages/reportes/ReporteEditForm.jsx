@@ -71,6 +71,7 @@ const ReporteEditForm = () => {
           cantHrMep: data.cantHrMep ?? 0,
           cantHrDiscipulado: data.cantHrDiscipulado ?? 0,
           cantRetiroEspiritual: data.cantRetiroEspiritual ?? 0,
+          cantCultoCentral: data.cantCultoCentral ?? 0,
           tiempoOracion: data.tiempoOracion ?? 0,
           ayuno: data.ayuno ?? false,
           ofrendaSabado: data.ofrendaSabado ?? 0,
@@ -117,6 +118,7 @@ const ReporteEditForm = () => {
         cantHrMep: toNum(formData.cantHrMep),
         cantHrDiscipulado: toNum(formData.cantHrDiscipulado),
         cantRetiroEspiritual: toNum(formData.cantRetiroEspiritual),
+        cantCultoCentral: toNum(formData.cantCultoCentral),
         tiempoOracion: toNum(formData.tiempoOracion),
         ayuno: Boolean(formData.ayuno === true || formData.ayuno === 'true'),
         ofrendaSabado: toNum(formData.ofrendaSabado),
@@ -204,9 +206,10 @@ const ReporteEditForm = () => {
         {/* Actividades Espirituales */}
         <Section title="Actividades Espirituales" icon={<BookOpen className="w-4 h-4" />}>
           <Field label="Horas de Oración" name="cantHrOracion" value={formData.cantHrOracion} onChange={handleChange} disabled={isBloqueado} />
-          <Field label="Horas MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} disabled={isBloqueado} />
-          <Field label="Horas Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} disabled={isBloqueado} />
+          <Field label="Cantidad MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} disabled={isBloqueado} />
+          <Field label="Cantidad Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} disabled={isBloqueado} />
           <Field label="Retiro Espiritual" name="cantRetiroEspiritual" value={formData.cantRetiroEspiritual} onChange={handleChange} disabled={isBloqueado} />
+          <Field label="Culto Central (cantidad)" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} disabled={isBloqueado} />
           <Field label="Tiempo Oración (min)" name="tiempoOracion" value={formData.tiempoOracion} onChange={handleChange} disabled={isBloqueado} />
           <div>
             <label htmlFor="ayuno" className="block text-xs font-semibold text-gray-600 mb-1.5">¿Hizo Ayuno?</label>

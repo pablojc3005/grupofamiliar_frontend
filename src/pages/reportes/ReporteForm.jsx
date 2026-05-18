@@ -27,6 +27,7 @@ const INITIAL_FORM = {
   cantHrMep: '',
   cantHrDiscipulado: '',
   cantRetiroEspiritual: '',
+  cantCultoCentral: '',
   tiempoOracion: '',
   ayuno: false,
   // Ofrendas
@@ -138,6 +139,7 @@ const ReporteForm = () => {
         cantHrMep: toNum(formData.cantHrMep),
         cantHrDiscipulado: toNum(formData.cantHrDiscipulado),
         cantRetiroEspiritual: toNum(formData.cantRetiroEspiritual),
+        cantCultoCentral: toNum(formData.cantCultoCentral),
         tiempoOracion: toNum(formData.tiempoOracion),
         ayuno: Boolean(formData.ayuno === true || formData.ayuno === 'true'),
         ofrendaSabado: toNum(formData.ofrendaSabado),
@@ -273,9 +275,10 @@ const ReporteForm = () => {
         {/* Actividades Espirituales */}
         <Section title="Actividades Espirituales" icon={<BookOpen className="w-4 h-4" />}>
           <Field label="Horas de Oración" name="cantHrOracion" value={formData.cantHrOracion} onChange={handleChange} />
-          <Field label="Horas MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} />
-          <Field label="Horas Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} />
+          <Field label="Cantidad MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} />
+          <Field label="Cantidad Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} />
           <Field label="Retiro Espiritual (cantidad)" name="cantRetiroEspiritual" value={formData.cantRetiroEspiritual} onChange={handleChange} />
+          <Field label="Culto Central (cantidad)" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} />
           <Field label="Tiempo de Oración (minutos)" name="tiempoOracion" value={formData.tiempoOracion} onChange={handleChange} />
           <div>
             <label htmlFor="ayuno" className="block text-xs font-semibold text-gray-600 mb-1.5">¿Hizo Ayuno?</label>
