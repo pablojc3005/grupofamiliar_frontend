@@ -3,13 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 import api from '../../utils/axios';
 import Swal from 'sweetalert2';
-import { Save, Users, DollarSign, Loader2, ArrowLeft, Heart, BookOpen, Home, Send } from 'lucide-react';
+import { Save, Users, DollarSign, Loader2, ArrowLeft, Heart, BookOpen, Home, CheckSquare } from 'lucide-react';
 
 const INITIAL_FORM = {
   liderId: '',
   sectorId: '',
   semanaDesde: '',
   semanaHasta: '',
+  // Información general
+  diezmo: 'false',
+  lecturaBiblia: 'false',
+  visito: 'false',
+  horasOracion: '',
+  minutosOracion: '',
+  ayuno: 'false',
   // Asistencia
   cantHermanos: '',
   cantAmigos: '',
@@ -23,13 +30,11 @@ const INITIAL_FORM = {
   cantVisitaCasaDePaz: '',
   cantVisitaHogar: '',
   // Actividades espirituales
-  cantHrOracion: '',
+  cultoHoracion: '',
   cantHrMep: '',
   cantHrDiscipulado: '',
   cantRetiroEspiritual: '',
   cantCultoCentral: '',
-  tiempoOracion: '',
-  ayuno: false,
   // Ofrendas
   ofrendaSabado: '',
   ofrendaNinos: '',
@@ -62,13 +67,29 @@ const Field = ({ label, name, value, onChange, icon, min = '0', step }) => (
   </div>
 );
 
-const Section = ({ title, icon, children }) => (
+const BoolField = ({ label, name, value, onChange }) => (
+  <div>
+    <label htmlFor={name} className="block text-xs font-semibold text-gray-600 mb-1.5">{label}</label>
+    <select
+      id={name}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition-all"
+    >
+      <option value="false">No</option>
+      <option value="true">Sí</option>
+    </select>
+  </div>
+);
+
+const Section = ({ title, icon, children, cols = 'grid-cols-2 md:grid-cols-3' }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-3 border-b border-gray-100 flex items-center gap-2">
       <span className="text-indigo-600">{icon}</span>
       <h2 className="text-sm font-bold text-indigo-800 uppercase tracking-wide">{title}</h2>
     </div>
-    <div className="p-5 grid grid-cols-2 md:grid-cols-3 gap-4">{children}</div>
+    <div className={`p-5 grid ${cols} gap-4`}>{children}</div>
   </div>
 );
 
@@ -105,6 +126,7 @@ const ReporteForm = () => {
   };
 
   const toNum = (v) => (v === '' ? 0 : Number(v));
+  const toBool = (v) => v === true || v === 'true';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,27 +148,36 @@ const ReporteForm = () => {
         liderId: formData.liderId,
         semanaDesde: formData.semanaDesde,
         semanaHasta: formData.semanaHasta,
+        // Información general
+        diezmo: toBool(formData.diezmo),
+        lecturaBiblia: toBool(formData.lecturaBiblia),
+        visito: toBool(formData.visito),
+        horasOracion: toNum(formData.horasOracion),
+        minutosOracion: toNum(formData.minutosOracion),
+        ayuno: toBool(formData.ayuno),
+        // Asistencia
         cantHermanos: toNum(formData.cantHermanos),
         cantAmigos: toNum(formData.cantAmigos),
         cantAdolescentes: toNum(formData.cantAdolescentes),
         cantConvertidos: toNum(formData.cantConvertidos),
         cantNinosCristianos: toNum(formData.cantNinosCristianos),
         cantNinosAmigos: toNum(formData.cantNinosAmigos),
+        // Visitas
         cantVisitaConsolidacion: toNum(formData.cantVisitaConsolidacion),
         cantVisitaCasaDePaz: toNum(formData.cantVisitaCasaDePaz),
         cantVisitaHogar: toNum(formData.cantVisitaHogar),
-        cantHrOracion: toNum(formData.cantHrOracion),
+        // Actividades espirituales
+        cultoHoracion: toNum(formData.cultoHoracion),
         cantHrMep: toNum(formData.cantHrMep),
         cantHrDiscipulado: toNum(formData.cantHrDiscipulado),
         cantRetiroEspiritual: toNum(formData.cantRetiroEspiritual),
         cantCultoCentral: toNum(formData.cantCultoCentral),
-        tiempoOracion: toNum(formData.tiempoOracion),
-        ayuno: Boolean(formData.ayuno === true || formData.ayuno === 'true'),
+        // Ofrendas
         ofrendaSabado: toNum(formData.ofrendaSabado),
         ofrendaNinos: toNum(formData.ofrendaNinos),
         ofrendaMiercoles: toNum(formData.ofrendaMiercoles),
         observaciones: formData.observaciones,
-        estado: 'ENVIADO', // Siempre lo guardamos de forma definitiva
+        estado: 'ENVIADO',
       };
 
       const res = await api.post('/reportes', payload);
@@ -193,9 +224,10 @@ const ReporteForm = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Información General */}
-        <Section title="Información General" icon={<Users className="w-4 h-4" />}>
+        <Section title="Información General" icon={<Users className="w-4 h-4" />} cols="grid-cols-2 md:grid-cols-3">
+          {/* Sector */}
           <div className="md:col-span-1">
             <label htmlFor="sectorId" className="block text-xs font-semibold text-gray-600 mb-1.5">Sector *</label>
             <select
@@ -212,6 +244,7 @@ const ReporteForm = () => {
               ))}
             </select>
           </div>
+          {/* Líder */}
           <div className="md:col-span-2">
             <label htmlFor="liderId" className="block text-xs font-semibold text-gray-600 mb-1.5">Líder que reporta *</label>
             <select
@@ -229,7 +262,8 @@ const ReporteForm = () => {
               ))}
             </select>
           </div>
-          <div className="md:col-span-1">
+          {/* Semana */}
+          <div>
             <label htmlFor="semanaDesde" className="block text-xs font-semibold text-gray-600 mb-1.5">Semana Desde *</label>
             <input
               type="date"
@@ -241,7 +275,7 @@ const ReporteForm = () => {
               required
             />
           </div>
-          <div className="md:col-span-1">
+          <div>
             <label htmlFor="semanaHasta" className="block text-xs font-semibold text-gray-600 mb-1.5">Semana Hasta *</label>
             <input
               type="date"
@@ -253,6 +287,58 @@ const ReporteForm = () => {
               required
             />
           </div>
+
+          {/* Separador visual */}
+          <div className="md:col-span-3 border-t border-dashed border-indigo-100 pt-1 -mb-1">
+            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Vida espiritual del líder</span>
+          </div>
+
+          <BoolField label="Diezmo" name="diezmo" value={formData.diezmo} onChange={handleChange} />
+          <BoolField label="Lectura Bíblica" name="lecturaBiblia" value={formData.lecturaBiblia} onChange={handleChange} />
+          <BoolField label="Visitó" name="visito" value={formData.visito} onChange={handleChange} />
+
+          {/* Oración — dos campos que visualmente se muestran como "X Hr Y Mn" */}
+          <div className="md:col-span-3">
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Oración — <span className="font-normal text-indigo-500">
+                {toNum(formData.horasOracion) > 0 || toNum(formData.minutosOracion) > 0
+                  ? `${toNum(formData.horasOracion)} Hr ${toNum(formData.minutosOracion)} Mn`
+                  : 'ingresa horas y minutos'}
+              </span>
+            </label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <input
+                  id="horasOracion"
+                  type="number"
+                  name="horasOracion"
+                  min="0"
+                  max="23"
+                  value={formData.horasOracion}
+                  onChange={handleChange}
+                  className="w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition-all"
+                  placeholder="Horas"
+                />
+              </div>
+              <div className="flex items-center text-gray-400 font-bold text-sm">Hr</div>
+              <div className="flex-1">
+                <input
+                  id="minutosOracion"
+                  type="number"
+                  name="minutosOracion"
+                  min="0"
+                  max="59"
+                  value={formData.minutosOracion}
+                  onChange={handleChange}
+                  className="w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition-all"
+                  placeholder="Minutos"
+                />
+              </div>
+              <div className="flex items-center text-gray-400 font-bold text-sm">Mn</div>
+            </div>
+          </div>
+
+          <BoolField label="¿Hizo Ayuno?" name="ayuno" value={formData.ayuno} onChange={handleChange} />
         </Section>
 
         {/* Asistencia */}
@@ -274,25 +360,11 @@ const ReporteForm = () => {
 
         {/* Actividades Espirituales */}
         <Section title="Actividades Espirituales" icon={<BookOpen className="w-4 h-4" />}>
-          <Field label="Horas de Oración" name="cantHrOracion" value={formData.cantHrOracion} onChange={handleChange} />
+          <Field label="Culto Oración" name="cultoHoracion" value={formData.cultoHoracion} onChange={handleChange} />
           <Field label="Cantidad MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} />
           <Field label="Cantidad Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} />
-          <Field label="Retiro Espiritual (cantidad)" name="cantRetiroEspiritual" value={formData.cantRetiroEspiritual} onChange={handleChange} />
-          <Field label="Culto Central (cantidad)" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} />
-          <Field label="Tiempo de Oración (minutos)" name="tiempoOracion" value={formData.tiempoOracion} onChange={handleChange} />
-          <div>
-            <label htmlFor="ayuno" className="block text-xs font-semibold text-gray-600 mb-1.5">¿Hizo Ayuno?</label>
-            <select
-              id="ayuno"
-              name="ayuno"
-              value={formData.ayuno}
-              onChange={handleChange}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition-all"
-            >
-              <option value="false">No</option>
-              <option value="true">Sí</option>
-            </select>
-          </div>
+          <Field label="Retiro Espiritual" name="cantRetiroEspiritual" value={formData.cantRetiroEspiritual} onChange={handleChange} />
+          <Field label="Culto Central" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} />
         </Section>
 
         {/* Ofrendas */}

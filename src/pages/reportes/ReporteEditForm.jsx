@@ -32,15 +32,36 @@ const Field = ({ label, name, value, onChange, icon, min = '0', step, disabled }
   </div>
 );
 
-const Section = ({ title, icon, children }) => (
+const BoolField = ({ label, name, value, onChange, disabled }) => (
+  <div>
+    <label htmlFor={name} className="block text-xs font-semibold text-gray-600 mb-1.5">{label}</label>
+    <select
+      id={name}
+      name={name}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      className={`w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all
+        ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-white focus:ring-2 focus:ring-indigo-400'}`}
+    >
+      <option value="false">No</option>
+      <option value="true">Sí</option>
+    </select>
+  </div>
+);
+
+const Section = ({ title, icon, children, cols = 'grid-cols-2 md:grid-cols-3' }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-3 border-b border-gray-100 flex items-center gap-2">
       <span className="text-indigo-600">{icon}</span>
       <h2 className="text-sm font-bold text-indigo-800 uppercase tracking-wide">{title}</h2>
     </div>
-    <div className="p-5 grid grid-cols-2 md:grid-cols-3 gap-4">{children}</div>
+    <div className={`p-5 grid ${cols} gap-4`}>{children}</div>
   </div>
 );
+
+const toNum = (v) => (v === '' ? 0 : Number(v));
+const toBool = (v) => v === true || v === 'true';
 
 const ReporteEditForm = () => {
   const navigate = useNavigate();
@@ -58,22 +79,31 @@ const ReporteEditForm = () => {
         if (!data) throw new Error('No se encontró el reporte');
         setReporte(data);
         setFormData({
+          // Información general
+          diezmo: data.diezmo ?? false,
+          lecturaBiblia: data.lecturaBiblia ?? false,
+          visito: data.visito ?? false,
+          horasOracion: data.horasOracion ?? 0,
+          minutosOracion: data.minutosOracion ?? 0,
+          ayuno: data.ayuno ?? false,
+          // Asistencia
           cantHermanos: data.cantHermanos ?? 0,
           cantAmigos: data.cantAmigos ?? 0,
           cantAdolescentes: data.cantAdolescentes ?? 0,
           cantConvertidos: data.cantConvertidos ?? 0,
           cantNinosCristianos: data.cantNinosCristianos ?? 0,
           cantNinosAmigos: data.cantNinosAmigos ?? 0,
+          // Visitas
           cantVisitaConsolidacion: data.cantVisitaConsolidacion ?? 0,
           cantVisitaCasaDePaz: data.cantVisitaCasaDePaz ?? 0,
           cantVisitaHogar: data.cantVisitaHogar ?? 0,
-          cantHrOracion: data.cantHrOracion ?? 0,
+          // Actividades espirituales
+          cultoHoracion: data.cultoHoracion ?? 0,
           cantHrMep: data.cantHrMep ?? 0,
           cantHrDiscipulado: data.cantHrDiscipulado ?? 0,
           cantRetiroEspiritual: data.cantRetiroEspiritual ?? 0,
           cantCultoCentral: data.cantCultoCentral ?? 0,
-          tiempoOracion: data.tiempoOracion ?? 0,
-          ayuno: data.ayuno ?? false,
+          // Ofrendas
           ofrendaSabado: data.ofrendaSabado ?? 0,
           ofrendaNinos: data.ofrendaNinos ?? 0,
           ofrendaMiercoles: data.ofrendaMiercoles ?? 0,
@@ -96,8 +126,6 @@ const ReporteEditForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const toNum = (v) => (v === '' ? 0 : Number(v));
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isBloqueado) return;
@@ -105,22 +133,31 @@ const ReporteEditForm = () => {
     setIsSubmitting(true);
     try {
       const payload = {
+        // Información general
+        diezmo: toBool(formData.diezmo),
+        lecturaBiblia: toBool(formData.lecturaBiblia),
+        visito: toBool(formData.visito),
+        horasOracion: toNum(formData.horasOracion),
+        minutosOracion: toNum(formData.minutosOracion),
+        ayuno: toBool(formData.ayuno),
+        // Asistencia
         cantHermanos: toNum(formData.cantHermanos),
         cantAmigos: toNum(formData.cantAmigos),
         cantAdolescentes: toNum(formData.cantAdolescentes),
         cantConvertidos: toNum(formData.cantConvertidos),
         cantNinosCristianos: toNum(formData.cantNinosCristianos),
         cantNinosAmigos: toNum(formData.cantNinosAmigos),
+        // Visitas
         cantVisitaConsolidacion: toNum(formData.cantVisitaConsolidacion),
         cantVisitaCasaDePaz: toNum(formData.cantVisitaCasaDePaz),
         cantVisitaHogar: toNum(formData.cantVisitaHogar),
-        cantHrOracion: toNum(formData.cantHrOracion),
+        // Actividades espirituales
+        cultoHoracion: toNum(formData.cultoHoracion),
         cantHrMep: toNum(formData.cantHrMep),
         cantHrDiscipulado: toNum(formData.cantHrDiscipulado),
         cantRetiroEspiritual: toNum(formData.cantRetiroEspiritual),
         cantCultoCentral: toNum(formData.cantCultoCentral),
-        tiempoOracion: toNum(formData.tiempoOracion),
-        ayuno: Boolean(formData.ayuno === true || formData.ayuno === 'true'),
+        // Ofrendas
         ofrendaSabado: toNum(formData.ofrendaSabado),
         ofrendaNinos: toNum(formData.ofrendaNinos),
         ofrendaMiercoles: toNum(formData.ofrendaMiercoles),
@@ -185,7 +222,64 @@ const ReporteEditForm = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Información General del Líder */}
+        <Section title="Información General" icon={<Users className="w-4 h-4" />} cols="grid-cols-2 md:grid-cols-3">
+          <div className="md:col-span-3 border-b border-dashed border-indigo-100 pb-1 -mt-1">
+            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Vida espiritual del líder</span>
+          </div>
+          <BoolField label="Diezmo" name="diezmo" value={formData.diezmo} onChange={handleChange} disabled={isBloqueado} />
+          <BoolField label="Lectura Bíblica" name="lecturaBiblia" value={formData.lecturaBiblia} onChange={handleChange} disabled={isBloqueado} />
+          <BoolField label="Visitó" name="visito" value={formData.visito} onChange={handleChange} disabled={isBloqueado} />
+
+          {/* Oración con preview Hr Mn */}
+          <div className="md:col-span-3">
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Oración — <span className="font-normal text-indigo-500">
+                {toNum(formData.horasOracion) > 0 || toNum(formData.minutosOracion) > 0
+                  ? `${toNum(formData.horasOracion)} Hr ${toNum(formData.minutosOracion)} Mn`
+                  : 'ingresa horas y minutos'}
+              </span>
+            </label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <input
+                  id="horasOracion"
+                  type="number"
+                  name="horasOracion"
+                  min="0"
+                  max="23"
+                  value={formData.horasOracion}
+                  onChange={handleChange}
+                  disabled={isBloqueado}
+                  className={`w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all
+                    ${isBloqueado ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400'}`}
+                  placeholder="Horas"
+                />
+              </div>
+              <div className="flex items-center text-gray-400 font-bold text-sm">Hr</div>
+              <div className="flex-1">
+                <input
+                  id="minutosOracion"
+                  type="number"
+                  name="minutosOracion"
+                  min="0"
+                  max="59"
+                  value={formData.minutosOracion}
+                  onChange={handleChange}
+                  disabled={isBloqueado}
+                  className={`w-full pl-3 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all
+                    ${isBloqueado ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-indigo-400'}`}
+                  placeholder="Minutos"
+                />
+              </div>
+              <div className="flex items-center text-gray-400 font-bold text-sm">Mn</div>
+            </div>
+          </div>
+
+          <BoolField label="¿Hizo Ayuno?" name="ayuno" value={formData.ayuno} onChange={handleChange} disabled={isBloqueado} />
+        </Section>
+
         {/* Asistencia */}
         <Section title="Asistencia" icon={<Users className="w-4 h-4" />}>
           <Field label="Hermanos" name="cantHermanos" value={formData.cantHermanos} onChange={handleChange} icon={<Users className="w-4 h-4" />} disabled={isBloqueado} />
@@ -205,27 +299,11 @@ const ReporteEditForm = () => {
 
         {/* Actividades Espirituales */}
         <Section title="Actividades Espirituales" icon={<BookOpen className="w-4 h-4" />}>
-          <Field label="Horas de Oración" name="cantHrOracion" value={formData.cantHrOracion} onChange={handleChange} disabled={isBloqueado} />
+          <Field label="Culto Oración" name="cultoHoracion" value={formData.cultoHoracion} onChange={handleChange} disabled={isBloqueado} />
           <Field label="Cantidad MEP" name="cantHrMep" value={formData.cantHrMep} onChange={handleChange} disabled={isBloqueado} />
           <Field label="Cantidad Discipulado" name="cantHrDiscipulado" value={formData.cantHrDiscipulado} onChange={handleChange} disabled={isBloqueado} />
           <Field label="Retiro Espiritual" name="cantRetiroEspiritual" value={formData.cantRetiroEspiritual} onChange={handleChange} disabled={isBloqueado} />
-          <Field label="Culto Central (cantidad)" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} disabled={isBloqueado} />
-          <Field label="Tiempo Oración (min)" name="tiempoOracion" value={formData.tiempoOracion} onChange={handleChange} disabled={isBloqueado} />
-          <div>
-            <label htmlFor="ayuno" className="block text-xs font-semibold text-gray-600 mb-1.5">¿Hizo Ayuno?</label>
-            <select
-              id="ayuno"
-              name="ayuno"
-              value={formData.ayuno}
-              onChange={handleChange}
-              disabled={isBloqueado}
-              className={`w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm outline-none transition-all
-                ${isBloqueado ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-white focus:ring-2 focus:ring-indigo-400'}`}
-            >
-              <option value="false">No</option>
-              <option value="true">Sí</option>
-            </select>
-          </div>
+          <Field label="Culto Central" name="cantCultoCentral" value={formData.cantCultoCentral} onChange={handleChange} disabled={isBloqueado} />
         </Section>
 
         {/* Ofrendas */}
