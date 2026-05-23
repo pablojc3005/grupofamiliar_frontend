@@ -84,7 +84,7 @@ const PanelConsolidadoAdmin = () => {
   const [modalReporte, setModalReporte] = useState(null);
 
   useEffect(() => {
-    api.get('/sectores').then(r => setSectores(Array.isArray(r.data?.data) ? r.data.data : [])).catch(() => {});
+    api.get('/sectores').then(r => setSectores(Array.isArray(r.data?.data) ? r.data.data : [])).catch(() => { });
   }, []);
 
   const buscar = async () => {
@@ -212,39 +212,39 @@ const PanelConsolidadoAdmin = () => {
                     <th className="px-2 py-1.5 border border-violet-400 bg-violet-500">VISITÓ</th>
                     <th className="px-2 py-1.5 border border-violet-400 bg-violet-500">AYUNO</th>
                     {/* Asistencia */}
-                    {['HERMANOS','AMIGOS','ADOLESC.','TOTAL'].map(h => (
-                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h==='TOTAL'?'bg-indigo-700':''}`}>{h}</th>
+                    {['HERMANOS', 'AMIGOS', 'ADOLESC.', 'TOTAL'].map(h => (
+                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h === 'TOTAL' ? 'bg-indigo-700' : ''}`}>{h}</th>
                     ))}
                     {/* Niños / Convertidos */}
-                    {['CONVERT.','NIÑOS CRIST.','NIÑOS AMIGOS','TOTAL'].map(h => (
-                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h==='TOTAL'?'bg-indigo-700':''}`}>{h}</th>
+                    {['CONVERT.', 'NIÑOS CRIST.', 'NIÑOS AMIGOS', 'TOTAL'].map(h => (
+                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h === 'TOTAL' ? 'bg-indigo-700' : ''}`}>{h}</th>
                     ))}
                     {/* Visitas */}
-                    {['CONSOL.','CASA PAZ','HOGAR'].map(h => (
+                    {['CONSOL.', 'CASA PAZ', 'HOGAR'].map(h => (
                       <th key={h} className="px-2 py-1.5 border border-indigo-400">{h}</th>
                     ))}
                     {/* Act. espirituales */}
-                    {['CULTO ORAC.','MEP','DISCIP.','RETIRO','CULTO CENT.'].map(h => (
+                    {['CULTO ORAC.', 'MEP', 'DISCIP.', 'RETIRO', 'CULTO CENT.'].map(h => (
                       <th key={h} className="px-2 py-1.5 border border-indigo-400">{h}</th>
                     ))}
                     {/* Ofrendas */}
-                    {['SÁBADO','NIÑOS','MIÉRC.','TOTAL'].map(h => (
-                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h==='TOTAL'?'bg-indigo-700':''}`}>{h}</th>
+                    {['SÁBADO', 'NIÑOS', 'MIÉRC.', 'TOTAL'].map(h => (
+                      <th key={h} className={`px-2 py-1.5 border border-indigo-400 ${h === 'TOTAL' ? 'bg-indigo-700' : ''}`}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {reportes.map((r, i) => {
-                    const tA = (r.cantHermanos||0)+(r.cantAmigos||0)+(r.cantAdolescentes||0);
-                    const tN = (r.cantNinosCristianos||0)+(r.cantNinosAmigos||0);
-                    const tO = Number(r.ofrendaSabado||0)+Number(r.ofrendaNinos||0)+Number(r.ofrendaMiercoles||0);
+                    const tA = (r.cantHermanos || 0) + (r.cantAmigos || 0) + (r.cantAdolescentes || 0);
+                    const tN = (r.cantNinosCristianos || 0) + (r.cantNinosAmigos || 0);
+                    const tO = Number(r.ofrendaSabado || 0) + Number(r.ofrendaNinos || 0) + Number(r.ofrendaMiercoles || 0);
                     const tieneObs = r.observaciones && r.observaciones.trim().length > 0;
                     return (
                       <tr key={r.id} className="hover:bg-indigo-50/30 border-b border-gray-100">
-                        <td className="px-2 py-2 border border-gray-200 font-semibold text-gray-700">{i+1}</td>
+                        <td className="px-2 py-2 border border-gray-200 font-semibold text-gray-700">{i + 1}</td>
                         <td className="px-3 py-2 border border-gray-200 text-left">
                           <span className="font-medium text-gray-900">{r.grupoFamiliarNombre || `Líder #${r.liderId}`}</span>
-                          <br/><span className="text-[10px] text-gray-500">{r.liderNombre}</span>
+                          <br /><span className="text-[10px] text-gray-500">{r.liderNombre}</span>
                         </td>
                         {/* Info general */}
                         <td className="px-2 py-2 border border-violet-100 bg-violet-50/40">{fmtBool(r.diezmo)}</td>
@@ -253,30 +253,30 @@ const PanelConsolidadoAdmin = () => {
                         <td className="px-2 py-2 border border-violet-100 bg-violet-50/40">{fmtBool(r.visito)}</td>
                         <td className="px-2 py-2 border border-violet-100 bg-violet-50/40">{fmtBool(r.ayuno)}</td>
                         {/* Asistencia */}
-                        <td className="px-2 py-2 border border-gray-200">{r.cantHermanos||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantAmigos||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantAdolescentes||0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantHermanos || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantAmigos || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantAdolescentes || 0}</td>
                         <td className="px-2 py-2 border border-gray-200 font-bold bg-indigo-50 text-indigo-700">{tA}</td>
                         {/* Niños / Convertidos */}
-                        <td className="px-2 py-2 border border-gray-200">{r.cantConvertidos||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantNinosCristianos||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantNinosAmigos||0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantConvertidos || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantNinosCristianos || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantNinosAmigos || 0}</td>
                         <td className="px-2 py-2 border border-gray-200 font-bold bg-indigo-50 text-indigo-700">{tN}</td>
                         {/* Visitas */}
-                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaConsolidacion||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaCasaDePaz||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaHogar||0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaConsolidacion || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaCasaDePaz || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantVisitaHogar || 0}</td>
                         {/* Act. espirituales */}
-                        <td className="px-2 py-2 border border-gray-200">{r.cultoHoracion||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantHrMep||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantHrDiscipulado||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantRetiroEspiritual||0}</td>
-                        <td className="px-2 py-2 border border-gray-200">{r.cantCultoCentral||0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cultoHoracion || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantHrMep || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantHrDiscipulado || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantRetiroEspiritual || 0}</td>
+                        <td className="px-2 py-2 border border-gray-200">{r.cantCultoCentral || 0}</td>
                         {/* Ofrendas */}
-                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaSabado||0).toFixed(0)}</td>
-                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaNinos||0).toFixed(0)}</td>
-                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaMiercoles||0).toFixed(0)}</td>
-                        <td className="px-2 py-2 border border-gray-200 font-bold bg-indigo-50 text-indigo-700">{tO.toFixed(0)}</td>
+                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaSabado || 0).toFixed(2)}</td>
+                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaNinos || 0).toFixed(2)}</td>
+                        <td className="px-2 py-2 border border-gray-200">{Number(r.ofrendaMiercoles || 0).toFixed(2)}</td>
+                        <td className="px-2 py-2 border border-gray-200 font-bold bg-indigo-50 text-indigo-700">{tO.toFixed(2)}</td>
                         {/* Observaciones */}
                         <td className="px-2 py-2 border border-gray-200">
                           <div className="flex justify-center">
@@ -293,30 +293,30 @@ const PanelConsolidadoAdmin = () => {
                     {/* Info general — no sumable, dejar vacío */}
                     <td className="px-2 py-3 border border-gray-300 bg-yellow-300" colSpan={5}></td>
                     {/* Asistencia */}
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantHermanos')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantAmigos')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantAdolescentes')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHermanos')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantAmigos')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantAdolescentes')}</td>
                     <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{totalAsistencia}</td>
                     {/* Niños / Convertidos */}
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantConvertidos')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantNinosCristianos')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantNinosAmigos')}</td>
-                    <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{suma(reportes,'cantNinosCristianos')+suma(reportes,'cantNinosAmigos')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantConvertidos')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantNinosCristianos')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantNinosAmigos')}</td>
+                    <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{suma(reportes, 'cantNinosCristianos') + suma(reportes, 'cantNinosAmigos')}</td>
                     {/* Visitas */}
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantVisitaConsolidacion')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantVisitaCasaDePaz')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantVisitaHogar')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaConsolidacion')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaCasaDePaz')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaHogar')}</td>
                     {/* Act. espirituales */}
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cultoHoracion')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantHrMep')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantHrDiscipulado')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantRetiroEspiritual')}</td>
-                    <td className="px-2 py-3 border border-gray-300">{suma(reportes,'cantCultoCentral')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cultoHoracion')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHrMep')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHrDiscipulado')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantRetiroEspiritual')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantCultoCentral')}</td>
                     {/* Ofrendas */}
-                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a,r)=>a+Number(r.ofrendaSabado||0),0).toFixed(0)}</td>
-                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a,r)=>a+Number(r.ofrendaNinos||0),0).toFixed(0)}</td>
-                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a,r)=>a+Number(r.ofrendaMiercoles||0),0).toFixed(0)}</td>
-                    <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{reportes.reduce((a,r)=>a+Number(r.ofrendaSabado||0)+Number(r.ofrendaNinos||0)+Number(r.ofrendaMiercoles||0),0).toFixed(0)}</td>
+                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaSabado || 0), 0).toFixed(2)}</td>
+                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaNinos || 0), 0).toFixed(2)}</td>
+                    <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
+                    <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{reportes.reduce((a, r) => a + Number(r.ofrendaSabado || 0) + Number(r.ofrendaNinos || 0) + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
                     {/* OBS */}
                     <td className="px-2 py-3 border border-gray-300"></td>
                   </tr>
