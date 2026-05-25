@@ -470,30 +470,30 @@ const DashboardSupervisorSectorial = () => {
                         {/* Info general — no sumable, dejar vacío */}
                         <td className="px-2 py-3 border border-gray-300 bg-yellow-300" colSpan={5}></td>
                         {/* Asistencia */}
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHermanos')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantAmigos')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantAdolescentes')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantHermanos')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantAmigos')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantAdolescentes')}</td>
                         <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{totalAsistencia}</td>
                         {/* Niños / Convertidos */}
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantConvertidos')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantNinosCristianos')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantNinosAmigos')}</td>
-                        <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{suma(reportes, 'cantNinosCristianos') + suma(reportes, 'cantNinosAmigos')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantConvertidos')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantNinosCristianos')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantNinosAmigos')}</td>
+                        <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{suma(reportesFiltrados, 'cantNinosCristianos') + suma(reportesFiltrados, 'cantNinosAmigos')}</td>
                         {/* Visitas */}
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaConsolidacion')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaCasaDePaz')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantVisitaHogar')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantVisitaConsolidacion')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantVisitaCasaDePaz')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantVisitaHogar')}</td>
                         {/* Act. espirituales */}
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cultoHoracion')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHrMep')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHrDiscipulado')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantRetiroEspiritual')}</td>
-                        <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantCultoCentral')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cultoHoracion')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantHrMep')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantHrDiscipulado')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantRetiroEspiritual')}</td>
+                        <td className="px-2 py-3 border border-gray-300">{suma(reportesFiltrados, 'cantCultoCentral')}</td>
                         {/* Ofrendas */}
-                        <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaSabado || 0), 0).toFixed(2)}</td>
-                        <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaNinos || 0), 0).toFixed(2)}</td>
-                        <td className="px-2 py-3 border border-gray-300">{reportes.reduce((a, r) => a + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
-                        <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{reportes.reduce((a, r) => a + Number(r.ofrendaSabado || 0) + Number(r.ofrendaNinos || 0) + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
+                        <td className="px-2 py-3 border border-gray-300">{reportesFiltrados.reduce((a, r) => a + Number(r.ofrendaSabado || 0), 0).toFixed(2)}</td>
+                        <td className="px-2 py-3 border border-gray-300">{reportesFiltrados.reduce((a, r) => a + Number(r.ofrendaNinos || 0), 0).toFixed(2)}</td>
+                        <td className="px-2 py-3 border border-gray-300">{reportesFiltrados.reduce((a, r) => a + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
+                        <td className="px-2 py-3 border border-gray-300 bg-yellow-500">{reportesFiltrados.reduce((a, r) => a + Number(r.ofrendaSabado || 0) + Number(r.ofrendaNinos || 0) + Number(r.ofrendaMiercoles || 0), 0).toFixed(2)}</td>
                         {/* OBS */}
                         <td className="px-2 py-3 border border-gray-300"></td>
                       </tr>
