@@ -91,7 +91,7 @@ const Login = () => {
     try {
       const response = await api.post('/auth/login', { email, password });
 
-      console.log('🔐 Respuesta completa del login:', response.data);
+      //console.log('🔐 Respuesta completa del login:', response.data);
 
       const apiData = response.data?.data;
 
@@ -115,12 +115,12 @@ const Login = () => {
 
       // Verificar que el store tiene los datos antes de redirigir
       const storeState = useAuthStore.getState();
-      console.log('✅ Store después del login:', storeState.user);
-      console.log('✅ Rol en store:', storeState.user?.rol);
+      //console.log('✅ Store después del login:', storeState.user);
+      //console.log('✅ Rol en store:', storeState.user?.rol);
 
       // Redirigir al dashboard según el rol
       const destino = ROLE_DASHBOARD[apiData.rol?.toUpperCase()] || '/dashboard';
-      console.log('🚀 Redirigiendo a:', destino);
+      //console.log('🚀 Redirigiendo a:', destino);
       navigate(destino);
 
     } catch (error) {

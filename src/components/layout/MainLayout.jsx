@@ -21,6 +21,7 @@ const MENU_BY_ROLE = {
   ],
   SUP_SECTORIAL: [
     { title: 'Mi Sector', path: '/supervisor/dashboard', icon: <BarChart2 className="w-5 h-5" /> },
+    { title: 'Reporte Sectorial', path: '/supervisor/reporte-sectorial', icon: <FileText className="w-5 h-5" /> },
   ],
   SUP_GENERAL: [
     { title: 'Vista General', path: '/general/dashboard', icon: <Layers className="w-5 h-5" /> },
@@ -31,6 +32,7 @@ const MENU_BY_ROLE = {
   ADMIN: [
     { title: 'Panel Admin', path: '/admin/dashboard', icon: <Settings className="w-5 h-5" /> },
     { title: 'Supervisor Sec.', path: '/supervisor/dashboard', icon: <BarChart2 className="w-5 h-5" /> },
+    { title: 'Reporte Sectorial', path: '/supervisor/reporte-sectorial', icon: <FileText className="w-5 h-5" /> },
     { title: 'Vista General', path: '/general/dashboard', icon: <Layers className="w-5 h-5" /> },
     { title: 'Finanzas', path: '/finanzas/dashboard', icon: <DollarSign className="w-5 h-5" /> },
   ],

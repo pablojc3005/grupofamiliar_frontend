@@ -6,9 +6,26 @@ import autoTable from 'jspdf-autotable';
 // Helpers internos
 // ─────────────────────────────────────────────────────────
 
+const fmtBool = (v) => v ? '✓' : '✗';
+const fmtOracion = (hrs, min) => { const h = Number(hrs) || 0; const m = Number(min) || 0; return (h === 0 && m === 0) ? '✗' : `${h} hr ${m} min`; };
+const sumarOracion = (data) => {
+  let totalMin = 0;
+  for (const row of data) {
+    totalMin += (Number(row.horasOracion) || 0) * 60 + (Number(row.minutosOracion) || 0);
+  }
+  const horas = Math.floor(totalMin / 60);
+  const minutos = totalMin % 60;
+  return fmtOracion(horas, minutos);
+};
+
 const mapReporteRow = (r, idx) => ({
   'ÍTEM': idx + 1,
   'LÍDERES': r.liderNombre || `Líder ${r.liderId || ''}`,
+  'DIEZMO': fmtBool(r.diezmo),
+  'LEC. BIB.': fmtBool(r.lecturaBiblia),
+  'ORACION': fmtOracion(r.horasOracion, r.minutosOracion),
+  'VISITO': fmtBool(r.visito),
+  'AYUNA': fmtBool(r.ayuno),
   'CANT. HERMANOS': r.cantHermanos || 0,
   'CANT. AMIGOS': r.cantAmigos || 0,
   'CANT. ADOLESCENTES': r.cantAdolescentes || 0,
@@ -28,6 +45,7 @@ const mapReporteRow = (r, idx) => ({
   'OFRENDA NIÑOS': Number(r.ofrendaNinos || 0),
   'OFRENDA MIÉRCOLES': Number(r.ofrendaMiercoles || 0),
   'TOTAL OFRENDA': Number(r.ofrendaSabado || 0) + Number(r.ofrendaNinos || 0) + Number(r.ofrendaMiercoles || 0),
+  'OBS.': r.observaciones
 });
 
 const sumField = (reportes, field) => reportes.reduce((acc, r) => acc + (Number(r[field]) || 0), 0);
@@ -44,6 +62,11 @@ export const exportConsolidadoExcel = (reportes, titulo = 'Consolidado', fileNam
   const total = {
     'ÍTEM': '',
     'LÍDERES': 'TOTAL',
+    'DIEZMO': sumField(reportes, 'diezmo'),
+    'LEC. BIB.': sumField(reportes, 'lecturaBiblia'),
+    'ORACION': sumarOracion(reportes, 'horasOracion', 'minutosOracion'),
+    'VISITO': sumField(reportes, 'visito'),
+    'AYUNA': sumField(reportes, 'ayuno'),
     'CANT. HERMANOS': sumField(reportes, 'cantHermanos'),
     'CANT. AMIGOS': sumField(reportes, 'cantAmigos'),
     'CANT. ADOLESCENTES': sumField(reportes, 'cantAdolescentes'),
@@ -329,3 +352,251 @@ export const exportToExcel = (reportes, fileName = 'Reportes') => {
 export const exportToPDF = (reportes, title = 'Reporte Consolidado', fileName = 'Reportes') => {
   exportConsolidadoPDF(reportes, title, fileName);
 };
+
+// ─────────────────────────────────────────────────────────
+// Exportar un REPORTE SECTORIAL a PDF con firma e información detallada
+// ─────────────────────────────────────────────────────────
+export const exportReporteSectorialPDF = (reporte) => {
+  if (!reporte) return;
+
+  const doc = new jsPDF({ orientation: 'portrait', format: 'a4' });
+  const w = doc.internal.pageSize.width;
+  const h = doc.internal.pageSize.height;
+
+  // Título e info general
+  doc.setFontSize(15);
+  doc.setTextColor(30, 27, 75); // Indigo oscuro
+  doc.setFont('helvetica', 'bold');
+  doc.text('REPORTE SEMANAL DE SUPERVISOR SECTORIAL', 14, 20);
+
+  doc.setFontSize(9);
+  doc.setTextColor(100);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Sector: ${reporte.sectorNombre || '—'}`, 14, 26);
+  doc.text(`Supervisor: ${reporte.supervisorNombre || '—'}`, 14, 31);
+  doc.text(`Período: ${reporte.semanaDesde} hasta ${reporte.semanaHasta}`, 14, 36);
+  doc.text(`Estado del Reporte: ${reporte.estado}`, 14, 41);
+  doc.text(`Generado el: ${new Date().toLocaleDateString('es-PE')}`, w - 70, 26);
+
+  // 1. VIDA DEVOCIONAL
+  const fmtSiNo = (v) => v ? 'SÍ' : 'NO';
+  const headersDevocional = ['Oración Diaria', 'Lectura Bíblica', '¿Hizo Ayuno?', 'Culto de Liderazgo', 'Diezmo Mensual'];
+  const dataDevocional = [[
+    `${reporte.horasOracion || 0} Hr ${reporte.minutosOracion || 0} Mn`,
+    fmtSiNo(reporte.lecturaBiblia),
+    fmtSiNo(reporte.ayuno),
+    fmtSiNo(reporte.cultoLiderazgo),
+    fmtSiNo(reporte.diezmo)
+  ]];
+
+  autoTable(doc, {
+    startY: 46,
+    head: [headersDevocional],
+    body: dataDevocional,
+    theme: 'grid',
+    headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' },
+    bodyStyles: { halign: 'center', fontSize: 9 },
+    margin: { left: 14, right: 14 }
+  });
+
+  let currentY = doc.lastAutoTable.finalY + 8;
+
+  // 2. ATENCIÓN PERSONALIZADA
+  const atenciones = reporte.atencionesJson ? JSON.parse(reporte.atencionesJson) : [];
+  doc.setFontSize(11);
+  doc.setTextColor(30, 27, 75);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ATENCIÓN PERSONALIZADA', 14, currentY);
+  currentY += 4;
+
+  if (atenciones.length === 0) {
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.setFont('helvetica', 'italic');
+    doc.text('No se registraron atenciones en este período.', 14, currentY);
+    currentY += 8;
+  } else {
+    const headersAtenciones = ['Ítem', 'Líder / Miembro', 'Lugar', 'Fecha', 'Hora', 'Motivo', 'Resultado'];
+    const bodyAtenciones = atenciones.map((a, i) => [
+      i + 1,
+      a.lider || '—',
+      a.lugar || '—',
+      a.fecha || '—',
+      a.hora || '—',
+      a.motivo || '—',
+      a.resultado || '—'
+    ]);
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [headersAtenciones],
+      body: bodyAtenciones,
+      theme: 'grid',
+      headStyles: { fillColor: [124, 58, 237], textColor: [255, 255, 255], fontStyle: 'bold' },
+      bodyStyles: { fontSize: 8.5 },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 20 },
+        4: { cellWidth: 15 },
+        5: { cellWidth: 40 },
+        6: { cellWidth: 40 }
+      },
+      margin: { left: 14, right: 14 }
+    });
+    currentY = doc.lastAutoTable.finalY + 8;
+  }
+
+  // 3. REUNIÓN DE PLANIFICACIÓN
+  if (currentY + 40 > h) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  doc.setFontSize(11);
+  doc.setTextColor(30, 27, 75);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SUPERVISANDO LA REUNIÓN DE PLANIFICACIÓN', 14, currentY);
+  currentY += 4;
+
+  const dataPlanificacion = [
+    ['Grupo Visitado', reporte.planificacionGrupo || '—'],
+    ['Fecha de Visita', reporte.planificacionFecha || '—'],
+    ['Hora de Llegada', reporte.planificacionHora || '—'],
+    ['Aspectos Positivos', reporte.planificacionPositivos || '—'],
+    ['Aspectos Débiles', reporte.planificacionNegativos || '—']
+  ];
+
+  autoTable(doc, {
+    startY: currentY,
+    body: dataPlanificacion,
+    theme: 'grid',
+    bodyStyles: { fontSize: 9 },
+    columnStyles: {
+      0: { fontStyle: 'bold', fillColor: [243, 244, 246], cellWidth: 50 },
+      1: { cellWidth: 132 }
+    },
+    margin: { left: 14, right: 14 }
+  });
+  currentY = doc.lastAutoTable.finalY + 8;
+
+  // 4. SUPERVISIÓN DE REUNIÓN EVANGELÍSTICA
+  if (currentY + 30 > h) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  const supervisiones = reporte.supervisionesJson ? JSON.parse(reporte.supervisionesJson) : [];
+  doc.setFontSize(11);
+  doc.setTextColor(30, 27, 75);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SUPERVISANDO LA REUNIÓN EVANGELÍSTICA', 14, currentY);
+  currentY += 4;
+
+  if (supervisiones.length === 0) {
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.setFont('helvetica', 'italic');
+    doc.text('No se registraron supervisiones de reunión evangelística.', 14, currentY);
+    currentY += 8;
+  } else {
+    const headersSupervisiones = ['Ítem', 'Grupo', 'Fecha', 'Hora', 'Aspectos Positivos', 'Aspectos Débiles'];
+    const bodySupervisiones = supervisiones.map((s, i) => [
+      i + 1,
+      s.grupoNombre || '—',
+      s.fecha || '—',
+      s.hora || '—',
+      s.positivos || '—',
+      s.negativos || '—'
+    ]);
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [headersSupervisiones],
+      body: bodySupervisiones,
+      theme: 'grid',
+      headStyles: { fillColor: [13, 148, 136], textColor: [255, 255, 255], fontStyle: 'bold' },
+      bodyStyles: { fontSize: 8.5 },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 18 },
+        4: { cellWidth: 48 },
+        5: { cellWidth: 49 }
+      },
+      margin: { left: 14, right: 14 }
+    });
+    currentY = doc.lastAutoTable.finalY + 8;
+  }
+
+  // 5. EVALUACIÓN DE TRABAJO EN EQUIPO
+  if (currentY + 30 > h) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  const evaluaciones = reporte.evaluacionesEquipoJson ? JSON.parse(reporte.evaluacionesEquipoJson) : [];
+  doc.setFontSize(11);
+  doc.setTextColor(30, 27, 75);
+  doc.setFont('helvetica', 'bold');
+  doc.text('EVALUACIÓN DE TRABAJO EN EQUIPO', 14, currentY);
+  currentY += 4;
+
+  if (evaluaciones.length === 0) {
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.setFont('helvetica', 'italic');
+    doc.text('No hay comentarios de evaluación registrados.', 14, currentY);
+    currentY += 8;
+  } else {
+    const headersEvals = ['Grupo Familiar', 'Fortalezas / Debilidades / Comentarios'];
+    const bodyEvals = evaluaciones.map((e) => [
+      e.grupoNombre || '—',
+      e.evaluacion || 'Sin comentarios registrados.'
+    ]);
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [headersEvals],
+      body: bodyEvals,
+      theme: 'grid',
+      headStyles: { fillColor: [219, 39, 119], textColor: [255, 255, 255], fontStyle: 'bold' },
+      bodyStyles: { fontSize: 8.5 },
+      columnStyles: {
+        0: { cellWidth: 45, fontStyle: 'bold' },
+        1: { cellWidth: 137 }
+      },
+      margin: { left: 14, right: 14 }
+    });
+    currentY = doc.lastAutoTable.finalY + 8;
+  }
+
+  // 6. FIRMA MANUSCRITA
+  if (reporte.firma) {
+    if (currentY + 50 > h) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FIRMA DEL SUPERVISOR SECTORIAL:', 14, currentY + 5);
+
+    try {
+      doc.addImage(reporte.firma, 'PNG', 14, currentY + 8, 60, 22);
+      currentY += 35;
+    } catch (err) {
+      console.error("Error al renderizar firma en PDF:", err);
+      doc.text('[Error al renderizar la firma manuscrita]', 14, currentY + 12);
+      currentY += 20;
+    }
+  }
+
+  // Descargar el documento PDF
+  const nombreArchivo = `Reporte_Sectorial_${reporte.sectorNombre?.replace(/\s+/g, '_') || 'Sector'}_${reporte.semanaDesde}.pdf`;
+  doc.save(nombreArchivo);
+};
+

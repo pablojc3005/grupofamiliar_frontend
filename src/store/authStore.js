@@ -10,7 +10,7 @@ const useAuthStore = create(
 
       // Modificar para recibir un solo objeto con todos los datos
       login: (authResponse) => {
-        console.log('📝 Store login - Datos recibidos:', authResponse);
+        //console.log('📝 Store login - Datos recibidos:', authResponse);
 
         // Extraer el token y los datos del usuario
         const { accessToken, refreshToken, tipo, ...userData } = authResponse;
@@ -29,8 +29,8 @@ const useAuthStore = create(
           supervisorNombre: userData.supervisorNombre
         };
 
-        console.log('👤 Usuario guardado en store:', user);
-        console.log('🔑 Token guardado:', accessToken);
+        //console.log('👤 Usuario guardado en store:', user);
+        //console.log('🔑 Token guardado:', accessToken);
 
         set({
           user: user,
@@ -40,7 +40,7 @@ const useAuthStore = create(
       },
 
       logout: () => {
-        console.log('🚪 Cerrando sesión');
+        //console.log('🚪 Cerrando sesión');
         set({
           user: null,
           token: null,

@@ -15,6 +15,16 @@ const fmtOracion = (hrs, min) => {
   return `${h} Hr ${m} Mn`;
 };
 
+const sumarOracion = (data) => {
+  let totalMin = 0;
+  for (const row of data) {
+    totalMin += (Number(row.horasOracion) || 0) * 60 + (Number(row.minutosOracion) || 0);
+  }
+  const horas = Math.floor(totalMin / 60);
+  const minutos = totalMin % 60;
+  return fmtOracion(horas, minutos);
+};
+
 // Icono ojo con estado activo/inactivo
 const EyeIcon = ({ active, onClick }) => (
   <button
@@ -290,8 +300,12 @@ const PanelConsolidadoAdmin = () => {
                 <tfoot>
                   <tr className="bg-yellow-400 font-bold text-gray-900 border-t-2 border-gray-400">
                     <td className="px-2 py-3 border border-gray-300 text-center" colSpan={2}>TOTAL</td>
-                    {/* Info general — no sumable, dejar vacío */}
-                    <td className="px-2 py-3 border border-gray-300 bg-yellow-300" colSpan={5}></td>
+                    {/* Info general */}
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'diezmo')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'lecturaBiblia')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{sumarOracion(reportes, 'horasOracion', 'minutosOracion')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'visito')}</td>
+                    <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'ayuno')}</td>
                     {/* Asistencia */}
                     <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantHermanos')}</td>
                     <td className="px-2 py-3 border border-gray-300">{suma(reportes, 'cantAmigos')}</td>

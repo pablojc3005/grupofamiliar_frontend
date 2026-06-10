@@ -20,6 +20,9 @@ import PanelFinanzasAdmin from './pages/dashboard/PanelFinanzasAdmin';
 // Formularios
 import ReporteForm from './pages/reportes/ReporteForm';
 import ReporteEditForm from './pages/reportes/ReporteEditForm';
+import ReporteSectorialList from './pages/reportes/ReporteSectorialList';
+import ReporteSectorialForm from './pages/reportes/ReporteSectorialForm';
+import ReporteSectorialDetail from './pages/reportes/ReporteSectorialDetail';
 
 const RoleBasedDashboard = () => {
   const { user } = useAuthStore(); // obtén el rol del usuario
@@ -73,6 +76,10 @@ function App() {
       <Route element={<ProtectedRoute allowedRoles={['SUP_SECTORIAL', 'ADMIN']} />}>
         <Route element={<MainLayout />}>
           <Route path="/supervisor/dashboard" element={<RoleBasedDashboard />} />
+          <Route path="/supervisor/reporte-sectorial" element={<ReporteSectorialList />} />
+          <Route path="/supervisor/reporte-sectorial/nuevo" element={<ReporteSectorialForm />} />
+          <Route path="/supervisor/reporte-sectorial/editar/:id" element={<ReporteSectorialForm />} />
+          <Route path="/supervisor/reporte-sectorial/ver/:id" element={<ReporteSectorialDetail />} />
         </Route>
       </Route>
 
